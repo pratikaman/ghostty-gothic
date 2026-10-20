@@ -48,7 +48,11 @@ pub fn resourcesDir(alloc: Allocator) !ResourcesDir {
     //
     // Note: we ALWAYS want to allocate here because the result is always
     // freed, do not try to use internal_os.getenv or posix getenv.
-    if (comptime builtin.mode != .Debug) env: {
+    // Ghostty Gothic: on macOS prefer our own app bundle too, because a
+    // shell inside regular Ghostty exports its GHOSTTY_RESOURCES_DIR and
+    // we'd load upstream's resources instead of the gothic ones.
+    const env_first = builtin.mode != .Debug and !builtin.target.os.tag.isDarwin();
+    if (comptime env_first) env: {
         const dir = global.environ().getAlloc(alloc, "GHOSTTY_RESOURCES_DIR") catch |err| switch (err) {
             error.EnvironmentVariableMissing => break :env,
             else => return err,
@@ -108,9 +112,9 @@ pub fn resourcesDir(alloc: Allocator) !ResourcesDir {
         }
     }
 
-    // If terminfo detection failed in debug builds (somehow),
+    // If terminfo detection failed in debug or macOS builds (somehow),
     // fallback and use the provided resources dir.
-    if (comptime builtin.mode == .Debug) {
+    if (comptime !env_first) {
         if (global.environ().getAlloc(alloc, "GHOSTTY_RESOURCES_DIR")) |dir| {
             if (dir.len > 0) return .{ .app_path = dir };
         } else |err| switch (err) {

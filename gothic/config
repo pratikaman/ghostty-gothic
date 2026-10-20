@@ -1,0 +1,21 @@
+# Ghostty Gothic defaults.
+#
+# Loaded before your own config files, so anything you set there wins.
+# To turn a piece off in your config:
+#   theme = <any other theme>
+#   custom-shader =
+#   window-title-font-family =
+
+theme = Cathedral
+custom-shader = cathedral.glsl
+
+# Blackletter tab and window titles (bundled, SIL OFL).
+window-title-font-family = GrenzeGotisch-Medium
+
+window-padding-x = 14
+window-padding-y = 10
+window-padding-balance = true
+
+# Updates come from upstream Ghostty and would replace this build.
+# Pull upstream into the fork instead.
+auto-update = off

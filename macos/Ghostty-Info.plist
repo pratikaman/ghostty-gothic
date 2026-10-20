@@ -6,6 +6,8 @@
 	<true/>
 	<key>NSDockTilePlugIn</key>
 	<string>DockTilePlugin.plugin</string>
+	<key>ATSApplicationFontsPath</key>
+	<string>ghostty/gothic</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

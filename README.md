@@ -1,3 +1,37 @@
+<p align="center">
+  <img src="images/Ghostty.icon/Assets/Gothic.png" alt="Ghostty Gothic" width="160">
+</p>
+
+# Ghostty Gothic
+
+A personal fork of Ghostty dressed as a Gothic cathedral. Upstream Ghostty is
+below, unchanged.
+
+- **Cathedral theme**: stained-glass jewel tones (Chartres cobalt, ruby, gilt,
+  amethyst, verdigris) on limestone and nave shadow. `gothic/themes/Cathedral`
+- **Cathedral shader**: the terminal is a pointed-arch window in an ashlar wall,
+  with slow stained-glass light shafts, drifting dust, and a candle that burns at
+  the cursor. It only touches background pixels, so text is never tinted.
+  Its knobs are at the top of `gothic/cathedral.glsl`.
+- **Blackletter titles**: tab and window titles in Grenze Gotisch (SIL OFL, bundled).
+- **Rose-window icon**: generated with Codex. `images/gothic/icon-a.png` is the
+  lancet-window alternate.
+- Separate bundle id `com.pratikaman.ghostty-gothic`, so it runs beside regular
+  Ghostty and keeps its own config at
+  `~/Library/Application Support/com.pratikaman.ghostty-gothic/config.ghostty`.
+
+The gothic defaults live in `gothic/config`. They load before your config, so
+`theme = ...`, `custom-shader =` or `window-title-font-family =` in your config
+override them. Auto-update is off: Sparkle would replace the fork with upstream.
+
+```sh
+zig build -Doptimize=ReleaseFast   # needs Zig 0.16.0 and Xcode 26+
+cp -R macos/build/ReleaseLocal/Ghostty.app "/Applications/Ghostty Gothic.app"
+git fetch upstream && git merge upstream/main   # stay current
+```
+
+---
+
 <!-- LOGO -->
 <h1>
 <p align="center">

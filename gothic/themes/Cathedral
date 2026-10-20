@@ -1,0 +1,24 @@
+# Cathedral: stained glass in a dark nave. Chartres cobalt, ruby, gilt,
+# amethyst and verdigris on limestone and shadow; the cursor is a candle.
+palette = 0=#2a2230
+palette = 1=#cf4a52
+palette = 2=#4f9e60
+palette = 3=#d4a43a
+palette = 4=#4a78e0
+palette = 5=#a965c8
+palette = 6=#3fa29d
+palette = 7=#c9bfae
+palette = 8=#7a6f80
+palette = 9=#ec6d74
+palette = 10=#82c98f
+palette = 11=#f2cf6b
+palette = 12=#7ea6f2
+palette = 13=#cd96e3
+palette = 14=#78d2c9
+palette = 15=#f6eedf
+background = #120e14
+foreground = #e6dcc8
+cursor-color = #f2b544
+cursor-text = #120e14
+selection-background = #3b2346
+selection-foreground = #f6eedf

@@ -4243,6 +4243,14 @@ fn writeConfigTemplate(path: []const u8) !void {
 /// The legacy `config` file (without extension) is first loaded,
 /// then `config.ghostty`.
 pub fn loadDefaultFiles(self: *Config, alloc: Allocator) !void {
+    // Ghostty Gothic: the bundled gothic defaults load first, so every
+    // user config file below overrides them.
+    if (global.resourcesDir().app()) |dir| {
+        const gothic_path = try std.fs.path.join(alloc, &.{ dir, "gothic", "config" });
+        defer alloc.free(gothic_path);
+        _ = self.loadOptionalFile(alloc, gothic_path);
+    }
+
     // Load XDG first
     const legacy_xdg_path = try file_load.legacyDefaultXdgPath(alloc);
     defer alloc.free(legacy_xdg_path);

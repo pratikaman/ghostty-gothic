@@ -138,6 +138,22 @@ pub fn init(b: *std.Build, cfg: *const Config, deps: *const SharedDeps) !Ghostty
         }
     }
 
+    // Ghostty Gothic: bundled default config, shader, title font and theme.
+    {
+        const install_step = b.addInstallDirectory(.{
+            .source_dir = b.path("gothic"),
+            .install_dir = .{ .custom = "share" },
+            .install_subdir = b.pathJoin(&.{ "ghostty", "gothic" }),
+        });
+        try steps.append(b.allocator, &install_step.step);
+
+        const theme_step = b.addInstallFile(
+            b.path("gothic/themes/Cathedral"),
+            "share/ghostty/themes/Cathedral",
+        );
+        try steps.append(b.allocator, &theme_step.step);
+    }
+
     // Fish shell completions
     {
         const run = b.addRunArtifact(build_data_exe);
