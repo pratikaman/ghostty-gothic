@@ -57,8 +57,7 @@ extension SplitView {
                 Color.clear
                     .frame(width: invisibleWidth, height: invisibleHeight)
                     .contentShape(Rectangle()) // Makes it hit testable for pointerStyle
-                Rectangle()
-                    .fill(color)
+                GothicDivider(direction: direction, color: color)
                     .frame(width: visibleWidth, height: visibleHeight)
             }
             .backport.pointerStyle(pointerStyle)

@@ -5,12 +5,21 @@
 #   theme = <any other theme>
 #   custom-shader =
 #   window-title-font-family =
+#   macos-titlebar-style = transparent
+#   cursor-candle = false
 
 theme = Cathedral
 custom-shader = cathedral.glsl
 
 # Blackletter tab and window titles (bundled, SIL OFL).
 window-title-font-family = GrenzeGotisch-Medium
+
+# Carved stone header with lancet tabs, an arch-shaped window and
+# cathedral doors on every new window/tab. `transparent` for stock chrome.
+macos-titlebar-style = gothic
+
+# The block cursor burns as a candle on empty cells.
+cursor-candle = true
 
 window-padding-x = 14
 window-padding-y = 10

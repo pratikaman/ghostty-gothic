@@ -212,6 +212,7 @@ pub fn renderGlyph(
         @intFromEnum(Sprite.cursor_rect),
         @intFromEnum(Sprite.cursor_hollow_rect),
         @intFromEnum(Sprite.cursor_bar),
+        @intFromEnum(Sprite.cursor_candle),
         => metrics.cursor_height,
         else => metrics.cell_height,
     };

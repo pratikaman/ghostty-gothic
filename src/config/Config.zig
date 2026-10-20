@@ -901,6 +901,11 @@ palette: Palette = .{},
 ///   * `false`
 @"cursor-style-blink": ?bool = null,
 
+/// Ghostty Gothic: draw the block cursor as a lit candle (a flame over a
+/// short taper) whenever it sits on an empty cell. Over text it stays a
+/// normal block so the character under it remains readable.
+@"cursor-candle": bool = false,
+
 /// The color of the text under the cursor. If this is not set, a default will
 /// be chosen.
 /// Specified as either hex (`#RRGGBB` or `RRGGBB`) or a named X11 color.
@@ -3415,7 +3420,8 @@ keybind: Keybinds = .{},
 @"macos-window-buttons": MacWindowButtons = .visible,
 
 /// The style of the macOS titlebar. Available values are: "native",
-/// "transparent", "tabs", and "hidden".
+/// "transparent", "tabs", "hidden", and "gothic" (Ghostty Gothic's carved
+/// stone header with lancet tabs and an arch-shaped window).
 ///
 /// The "native" style uses the native macOS titlebar with zero customization.
 /// The titlebar will match your window theme (see `window-theme`).
@@ -9282,6 +9288,8 @@ pub const MacTitlebarStyle = enum {
     transparent,
     tabs,
     hidden,
+    /// Ghostty Gothic: carved stone header, lancet tabs, arch-shaped window.
+    gothic,
 };
 
 /// See macos-titlebar-proxy-icon

@@ -45,101 +45,116 @@ struct AboutView: View {
 
     private var copyright: String? { Bundle.main.infoDictionary?["NSHumanReadableCopyright"] as? String }
 
-    // This creates a background style similar to the Apple "About My Mac" Window
-    private struct VisualEffectBackground: NSViewRepresentable {
-        let material: NSVisualEffectView.Material
-        let blendingMode: NSVisualEffectView.BlendingMode
-        let isEmphasized: Bool
-
-        init(material: NSVisualEffectView.Material,
-             blendingMode: NSVisualEffectView.BlendingMode = .behindWindow,
-             isEmphasized: Bool = false) {
-            self.material = material
-            self.blendingMode = blendingMode
-            self.isEmphasized = isEmphasized
-        }
-
-        func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
-            nsView.material = material
-            nsView.blendingMode = blendingMode
-            nsView.isEmphasized = isEmphasized
-        }
-
-        func makeNSView(context: Context) -> NSVisualEffectView {
-            let visualEffect = NSVisualEffectView()
-            visualEffect.autoresizingMask = [.width, .height]
-            return visualEffect
-        }
-    }
+    // Ghostty Gothic: the About window is an illuminated manuscript page.
+    private let forkURL = URL(string: "https://github.com/pratikaman/ghostty-gothic")
+    private static let ink = Color(nsColor: Gothic.ink)
+    private static let rubric = Color(nsColor: Gothic.ruby).opacity(0.95)
+    private static let gilt = Color(nsColor: Gothic.gilt)
 
     var body: some View {
-        VStack(alignment: .center) {
-            CyclingIconView()
+        VStack(alignment: .center, spacing: 18) {
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 112)
+                .shadow(color: .black.opacity(0.35), radius: 6, y: 3)
+                .accessibilityLabel("Ghostty Gothic Application Icon")
 
-            VStack(alignment: .center, spacing: 32) {
-                VStack(alignment: .center, spacing: 8) {
-                    Text("Ghostty")
-                        .bold()
-                        .font(.title)
-                    Text("Fast, native, feature-rich terminal \nemulator pushing modern features.")
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .font(.caption)
-                        .tint(.secondary)
-                        .opacity(0.8)
+            // An illuminated initial opening the title, as on a folio.
+            HStack(alignment: .bottom, spacing: 2) {
+                if let initial = Gothic.image("initial-G") {
+                    Image(nsImage: initial)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 52, height: 52)
+                } else {
+                    Text("G").font(.custom("GrenzeGotisch-Medium", size: 46)).foregroundStyle(Self.rubric)
                 }
+                Text("hostty Gothic")
+                    .font(.custom("GrenzeGotisch-Medium", size: 38))
+                    .foregroundStyle(Self.ink)
+                    .padding(.bottom, -4)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Ghostty Gothic")
+
+            Text("A fast, native terminal emulator,\nwrought in stone and stained glass.")
+                .font(.system(size: 12, design: .serif).italic())
+                .foregroundStyle(Self.ink.opacity(0.8))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
 
-                VStack(spacing: 2) {
-                    switch versionConfig {
-                    case .stable(let version):
-                        PropertyRow(label: "Version", text: version, url: versionConfig.url)
-                    case .tip:
-                        PropertyRow(label: "Version", text: "Tip Release")
-                    case .other(let v):
-                        PropertyRow(label: "Version", text: v)
-                    case .none:
-                        EmptyView()
-                    }
-                    if let build {
-                        PropertyRow(label: "Build", text: build)
-                    }
-                    if let commit, commit != "",
-                       let url = githubURL?.appendingPathComponent("/commits/\(commit)") {
-                        PropertyRow(label: "Commit", text: commit, url: url)
-                    }
-                }
-                .frame(maxWidth: .infinity)
+            Text("✠").font(.system(size: 13)).foregroundStyle(Self.rubric)
 
-                HStack(spacing: 8) {
-                    if let url = docsURL {
-                        Button("Docs") {
-                            openURL(url)
-                        }
-                    }
-                    if let url = githubURL {
-                        Button("GitHub") {
-                            openURL(url)
-                        }
-                    }
+            VStack(spacing: 3) {
+                switch versionConfig {
+                case .stable(let version):
+                    PropertyRow(label: "Version", text: version, url: versionConfig.url)
+                case .tip:
+                    PropertyRow(label: "Version", text: "Tip Release")
+                case .other(let v):
+                    PropertyRow(label: "Version", text: v)
+                case .none:
+                    EmptyView()
                 }
-
-                if let copy = self.copyright {
-                    Text(copy)
-                        .font(.caption)
-                        .textSelection(.enabled)
-                        .tint(.secondary)
-                        .opacity(0.8)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                if let build {
+                    PropertyRow(label: "Build", text: build)
+                }
+                if let commit, commit != "",
+                   let url = githubURL?.appendingPathComponent("/commits/\(commit)") {
+                    PropertyRow(label: "Commit", text: commit, url: url)
                 }
             }
             .frame(maxWidth: .infinity)
+
+            HStack(spacing: 10) {
+                link("Docs", docsURL)
+                Text("·").foregroundStyle(Self.rubric)
+                link("Ghostty", githubURL)
+                Text("·").foregroundStyle(Self.rubric)
+                link("This Fork", forkURL)
+            }
+
+            if let copy = self.copyright {
+                Text(copy)
+                    .font(.system(size: 10, design: .serif))
+                    .foregroundStyle(Self.ink.opacity(0.65))
+                    .textSelection(.enabled)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+            }
         }
-        .padding(.top, 8)
-        .padding(32)
-        .frame(minWidth: 256)
-        .background(VisualEffectBackground(material: .underWindowBackground).ignoresSafeArea())
+        .padding(.top, 12)
+        .padding(.horizontal, 44)
+        .padding(.bottom, 34)
+        .frame(minWidth: 340)
+        .background(page.ignoresSafeArea())
+        .environment(\.colorScheme, .light)
+    }
+
+    private func link(_ title: String, _ url: URL?) -> some View {
+        Button(title) { if let url { openURL(url) } }
+            .buttonStyle(.plain)
+            .font(.custom("GrenzeGotisch-Medium", size: 17))
+            .foregroundStyle(Self.rubric)
+    }
+
+    /// Vellum with a ruled border: a gilt rule inside a rubric one.
+    private var page: some View {
+        ZStack {
+            if let vellum = Gothic.image("parchment") {
+                Image(nsImage: vellum).resizable().scaledToFill()
+            } else {
+                Color(nsColor: Gothic.parchment)
+            }
+            Rectangle()
+                .strokeBorder(Self.rubric.opacity(0.7), lineWidth: 1.5)
+                .padding(12)
+            Rectangle()
+                .strokeBorder(Self.gilt.opacity(0.8), lineWidth: 1)
+                .padding(16)
+        }
     }
 
     private struct PropertyRow: View {
@@ -157,14 +172,16 @@ struct AboutView: View {
             Text(text)
                 .frame(width: 125, alignment: .leading)
                 .padding(.leading, 2)
-                .tint(.secondary)
-                .opacity(0.8)
-                .monospaced()
+                .foregroundStyle(AboutView.ink.opacity(0.85))
+                .font(.system(size: 12, design: .serif))
         }
 
         var body: some View {
             HStack(spacing: 4) {
+                // Rubricated labels, as in a manuscript.
                 Text(label)
+                    .font(.custom("GrenzeGotisch-Medium", size: 15))
+                    .foregroundStyle(AboutView.rubric)
                     .frame(width: 126, alignment: .trailing)
                     .padding(.trailing, 2)
                 if let url {
@@ -175,7 +192,6 @@ struct AboutView: View {
                     textView
                 }
             }
-            .font(.callout)
             .textSelection(.enabled)
             .frame(maxWidth: .infinity)
         }

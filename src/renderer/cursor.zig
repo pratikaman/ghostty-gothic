@@ -14,6 +14,9 @@ pub const Style = enum {
     // Special cursor styles
     lock,
 
+    /// Ghostty Gothic: replaces `block` on empty cells with `cursor-candle`.
+    candle,
+
     /// Create a cursor style from the terminal style request.
     pub fn fromTerminal(term: terminal.CursorStyle) Style {
         return switch (term) {

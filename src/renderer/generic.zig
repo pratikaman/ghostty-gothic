@@ -589,6 +589,7 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
             font_shaping_break: configpkg.FontShapingBreak,
             cursor_color: ?configpkg.Config.TerminalColor,
             cursor_opacity: f64,
+            cursor_candle: bool,
             cursor_text: ?configpkg.Config.TerminalColor,
             background: terminal.color.RGB,
             background_opacity: f64,
@@ -663,6 +664,7 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
                     .cursor_color = config.@"cursor-color",
                     .cursor_text = config.@"cursor-text",
                     .cursor_opacity = @max(0, @min(1, config.@"cursor-opacity")),
+                    .cursor_candle = config.@"cursor-candle",
 
                     .background = config.background.toTerminalRGB(),
                     .foreground = config.foreground.toTerminalRGB(),
@@ -2759,9 +2761,9 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
                 // a cursor. Otherwise, get our cursor cell, because we may
                 // need it for styling.
                 const cursor_vp = state.cursor.viewport orelse break :cursor;
+                const cursor_cell = state.row_data.items(.cells)[cursor_vp.y].get(cursor_vp.x);
                 const cursor_style: terminal.Style = cursor_style: {
-                    const cells = state.row_data.items(.cells);
-                    const cell = cells[cursor_vp.y].get(cursor_vp.x);
+                    const cell = cursor_cell;
                     break :cursor_style if (cell.raw.hasStyling())
                         cell.style
                     else
@@ -2773,7 +2775,17 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
 
                 // If there isn't a cursor visual style requested then
                 // we don't render a cursor.
-                const style = cursor_style_ orelse break :cursor;
+                const style: renderer.CursorStyle = style: {
+                    const requested = cursor_style_ orelse break :cursor;
+
+                    // Ghostty Gothic: on an empty cell the block cursor
+                    // burns as a candle; over text it stays a block.
+                    if (requested == .block and
+                        self.config.cursor_candle and
+                        !cursor_cell.raw.hasText()) break :style .candle;
+
+                    break :style requested;
+                };
 
                 // Determine the cursor color.
                 const cursor_color = cursor_color: {
@@ -3557,12 +3569,14 @@ pub fn Renderer(comptime GraphicsAPI: type) type {
                 .block_hollow,
                 .bar,
                 .underline,
+                .candle,
                 => render: {
                     const sprite: font.Sprite = switch (cursor_style) {
                         .block => .cursor_rect,
                         .block_hollow => .cursor_hollow_rect,
                         .bar => .cursor_bar,
                         .underline => .cursor_underline,
+                        .candle => .cursor_candle,
                         .lock => unreachable,
                     };
 

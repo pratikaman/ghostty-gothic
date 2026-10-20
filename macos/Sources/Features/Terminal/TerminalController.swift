@@ -21,6 +21,7 @@ class TerminalController: BaseTerminalController, TabGroupCloseCoordinator.Contr
         let nib = switch config.macosTitlebarStyle {
         case .native: "Terminal"
         case .hidden: "TerminalHiddenTitlebar"
+        case .gothic: "TerminalGothic"
         case .transparent: "TerminalTransparentTitlebar"
         case .tabs:
 #if compiler(>=6.2)

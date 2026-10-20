@@ -149,7 +149,7 @@ pub const Contents = struct {
             // Block cursors should be drawn first
             .block => self.fg_rows[0].appendAssumeCapacity(cell),
             // Other cursor styles should be drawn last
-            .block_hollow, .bar, .underline, .lock => self.fg_rows[self.size.rows + 1].appendAssumeCapacity(cell),
+            .block_hollow, .bar, .underline, .lock, .candle => self.fg_rows[self.size.rows + 1].appendAssumeCapacity(cell),
         }
     }
 

@@ -7,18 +7,37 @@
 A personal fork of Ghostty dressed as a Gothic cathedral. Upstream Ghostty is
 below, unchanged.
 
-- **Cathedral theme**: stained-glass jewel tones (Chartres cobalt, ruby, gilt,
-  amethyst, verdigris) on limestone and nave shadow. `gothic/themes/Cathedral`
-- **Cathedral shader**: the terminal is a pointed-arch window in an ashlar wall,
-  with slow stained-glass light shafts, drifting dust, and a candle that burns at
-  the cursor. It only touches background pixels, so text is never tinted.
-  Its knobs are at the top of `gothic/cathedral.glsl`.
-- **Blackletter titles**: tab and window titles in Grenze Gotisch (SIL OFL, bundled).
-- **Rose-window icon**: generated with Codex. `images/gothic/icon-a.png` is the
-  lancet-window alternate.
-- Separate bundle id `com.pratikaman.ghostty-gothic`, so it runs beside regular
-  Ghostty and keeps its own config at
-  `~/Library/Application Support/com.pratikaman.ghostty-gothic/config.ghostty`.
+Native changes (Swift/Zig, not possible with config alone):
+
+- **Arch-shaped window** (`macos-titlebar-style = gothic`): the AppKit titlebar
+  is replaced by a carved stone header whose top edge is an ogee arch, so the
+  window itself is arch-shaped; the area outside the arch is see-through.
+- **Lancet tabs**: tabs are pointed-arch windows. The selected one glows with
+  stained glass, the rest are dark stone. Click to switch, double-click or
+  right-click to rename, middle-click or hover-× to close.
+- **Stained-glass roundels** replace the traffic lights; a cobalt roundel opens
+  a new tab.
+- **Cathedral doors**: every new window or tab opens behind a pair of oak doors
+  that swing inward on their hinges.
+- **Stone columns** divide side-by-side splits; a carved string course divides
+  stacked ones.
+- **Candle cursor** (`cursor-candle = true`): on an empty cell the block cursor
+  is drawn as a lit candle; over text it stays a block so you can read it.
+- **Illuminated About window**: vellum, an illuminated initial, rubricated labels.
+
+Config-level dressing:
+
+- **Cathedral theme**: stained-glass jewel tones on limestone and nave shadow.
+- **Cathedral shader**: a pointed-arch nave with stained-glass light shafts,
+  drifting dust and a candle glow at the cursor; background pixels only.
+- **Blackletter titles** in Grenze Gotisch (SIL OFL, bundled).
+- **Rose-window icon**.
+
+All art was generated with Codex: `images/gothic/art-src` holds the sources,
+and `images/gothic/prepare-art.py` turns them into `gothic/art`.
+Separate bundle id `com.pratikaman.ghostty-gothic`, so it runs beside regular
+Ghostty with its own config at
+`~/Library/Application Support/com.pratikaman.ghostty-gothic/config.ghostty`.
 
 The gothic defaults live in `gothic/config`. They load before your config, so
 `theme = ...`, `custom-shader =` or `window-title-font-family =` in your config

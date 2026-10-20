@@ -40,27 +40,43 @@ class TerminalViewContainer: NSView {
     var initialContentSize: NSSize?
 
     override var intrinsicContentSize: NSSize {
-        let hostingSize = terminalView.intrinsicContentSize
+        var hostingSize = terminalView.intrinsicContentSize
         // The hosting view returns a valid size once SwiftUI has laid out
         // with the correct idealWidth/idealHeight. Before that (when
         // @FocusedValue hasn't propagated), it returns a tiny default.
         // Fall back to initialContentSize in that case.
         if let initialContentSize,
            hostingSize.width < initialContentSize.width || hostingSize.height < initialContentSize.height {
-            return initialContentSize
+            hostingSize = initialContentSize
         }
+        hostingSize.width += chromeInsets.left + chromeInsets.right
+        hostingSize.height += chromeInsets.top + chromeInsets.bottom
         return hostingSize
     }
+
+    /// Space reserved around the terminal for window chrome drawn by the
+    /// window itself (the Ghostty Gothic stone header and frame).
+    var chromeInsets = NSEdgeInsets() {
+        didSet {
+            insetConstraints[0].constant = chromeInsets.top
+            insetConstraints[1].constant = chromeInsets.left
+            insetConstraints[2].constant = -chromeInsets.bottom
+            insetConstraints[3].constant = -chromeInsets.right
+        }
+    }
+
+    private var insetConstraints: [NSLayoutConstraint] = []
 
     private func setup() {
         addSubview(terminalView)
         terminalView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
+        insetConstraints = [
             terminalView.topAnchor.constraint(equalTo: topAnchor),
             terminalView.leadingAnchor.constraint(equalTo: leadingAnchor),
             terminalView.bottomAnchor.constraint(equalTo: bottomAnchor),
             terminalView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        ])
+        ]
+        NSLayoutConstraint.activate(insetConstraints)
     }
 
     override func viewDidMoveToWindow() {

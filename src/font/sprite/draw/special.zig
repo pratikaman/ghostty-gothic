@@ -345,6 +345,66 @@ pub fn cursor_bar(
     }, .on);
 }
 
+/// Ghostty Gothic: a lit candle. A teardrop flame with a faint halo
+/// above a short taper, all in the cursor color.
+pub fn cursor_candle(
+    cp: u32,
+    canvas: *font.sprite.Canvas,
+    width: u32,
+    height: u32,
+    metrics: font.Metrics,
+) !void {
+    _ = cp;
+    _ = metrics;
+
+    const w: f64 = @floatFromInt(width);
+    const h: f64 = @floatFromInt(height);
+
+    // Halo first, then the flame over it.
+    try flame(canvas, w / 2, h * 0.01, h * 0.38, h * 0.57, w * 0.40, @enumFromInt(70));
+    try flame(canvas, w / 2, h * 0.07, h * 0.38, h * 0.52, w * 0.26, .on);
+
+    // The taper, with a gap for the wick and a stub of wick in it.
+    const taper_x: i32 = @intFromFloat(@round(w * 0.32));
+    const taper_w: i32 = @max(2, @as(i32, @intFromFloat(@round(w * 0.36))));
+    const taper_y: i32 = @intFromFloat(@round(h * 0.60));
+    canvas.rect(.{
+        .x = taper_x,
+        .y = taper_y,
+        .width = taper_w,
+        .height = @as(i32, @intCast(height)) - taper_y,
+    }, @enumFromInt(175));
+    canvas.rect(.{
+        .x = @intFromFloat(@round(w / 2 - 0.5)),
+        .y = @intFromFloat(@round(h * 0.53)),
+        .width = 1,
+        .height = taper_y - @as(i32, @intFromFloat(@round(h * 0.53))),
+    }, @enumFromInt(110));
+}
+
+/// A teardrop with its tip at `top`, widest (`rx` either side of `cx`)
+/// at `belly`, and rounded off at `bottom`.
+fn flame(
+    canvas: *font.sprite.Canvas,
+    cx: f64,
+    top: f64,
+    belly: f64,
+    bottom: f64,
+    rx: f64,
+    color: font.sprite.Color,
+) !void {
+    const shoulder = top + (belly - top) * 0.45;
+    const hip = belly + (bottom - belly) * 0.6;
+    var path = canvas.staticPath(8);
+    path.moveTo(cx, top);
+    path.curveTo(cx + rx * 0.25, shoulder, cx + rx, belly - (belly - top) * 0.3, cx + rx, belly);
+    path.curveTo(cx + rx, hip, cx + rx * 0.55, bottom, cx, bottom);
+    path.curveTo(cx - rx * 0.55, bottom, cx - rx, hip, cx - rx, belly);
+    path.curveTo(cx - rx, belly - (belly - top) * 0.3, cx - rx * 0.25, shoulder, cx, top);
+    path.close();
+    try canvas.fillPath(path.wrapped_path, .{}, color);
+}
+
 pub fn cursor_underline(
     cp: u32,
     canvas: *font.sprite.Canvas,
